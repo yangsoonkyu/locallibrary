@@ -13,10 +13,12 @@ def index(request):
     num_authors=Author.objects.count()
     ten_list = Book.objects.filter(title__contains='십이').count()
     num_genre =Genre.objects.count()
+    num_visits = request.session.get('num_visits', 0)
+    request.session['num_visits'] = num_visits + 1
 
     return render(request, 'catalog/index.html',
                   context={'num_books': num_books, 'num_instances': num_instances,'num_instances_available':num_instances_available,'num_authors':num_authors,
-                           'ten_list': ten_list, 'num_genre': num_genre})
+                           'ten_list': ten_list, 'num_genre': num_genre, 'num_visits': num_visits})
 
 
 # def BookListView(request):
