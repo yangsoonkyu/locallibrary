@@ -20,8 +20,11 @@ from django.views.generic import RedirectView
 
 
 
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^catalog/', include('catalog.urls', namespace='catalog')),
-    url(r'', RedirectView.as_view(url='/catalog/')),
+    url(r'^accounts/', include('django.contrib.auth.urls')),
+     url(r'', RedirectView.as_view(url='/catalog/')),
+
 ]

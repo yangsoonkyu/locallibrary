@@ -1,10 +1,39 @@
 from django.shortcuts import render
 from django.views import generic
+from django.views.generic import CreateView
+
 from .models import Book, Author, BookInstance, Genre
+from django.contrib.auth.mixins import LoginRequiredMixin    #1.9부터 사용 가능
+from django.contrib.auth.decorators import login_required
 
 
 
 # Create your views here.
+
+
+# class MyView(LoginRequiredMixin, View):
+#     login_url = '/login/'
+# django 1.9부터 사용 가능
+
+class LoginRequiredMixin(object):
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
+        return login_required(view)
+
+
+class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
+    model = BookInstance
+    template_name = 'catalog/bookinstance_list_borrowed_user.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return BookInstance.objects.filter(borrower=self.request.user).filter(status__exact='o').order_by('due_back')
+
+
+
+
+
 
 def index(request):
     num_books=Book.objects.all().count()
@@ -25,6 +54,8 @@ def index(request):
 #     book_list = Book.objects.all()
 #     return render(request, 'catalog/book_list', {'book_list': book_list})
 
+
+
 class BookListView(generic.ListView):
     model = Book
     template_name = 'catalog/book_list.html'
@@ -38,6 +69,7 @@ class BookListView(generic.ListView):
     #     return context
     paginate_by = 2
 
+
 class BookDetailView(generic.DetailView):
     model = Book
 
@@ -50,3 +82,4 @@ class AuthorListView(generic.ListView):
 class AuthorDetailView(generic.DetailView):
     model = Author
 
+# @login_required

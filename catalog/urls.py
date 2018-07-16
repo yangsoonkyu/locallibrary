@@ -12,6 +12,7 @@ urlpatterns = [
     url('^books/(?P<pk>[0-9]+)/$', views.BookDetailView.as_view(), name='book_detail'),
     url('^authors/$', views.AuthorListView.as_view(), name='authors'),
     url('^author/(?P<pk>[0-9]+)/$', views.AuthorDetailView.as_view(), name='author_detail'),
+    url('^mybooks/', views.LoanedBooksByUserListView.as_view(), name='my_borrowed'),
 ]
 
 

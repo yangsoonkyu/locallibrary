@@ -1,9 +1,13 @@
 from django.db import models
 from django.urls import reverse
 import uuid
+from django.contrib.auth.models import User
+
 
 
 # Create your models here.
+from django.utils import timezone
+
 
 class Book(models.Model):
     title = models.CharField(max_length=200)
@@ -30,6 +34,7 @@ class BookInstance(models.Model):
     book = models.ForeignKey('Book', on_delete=models.SET_NULL, null=True)
     imprint = models.CharField(max_length=200)
     due_back = models.DateTimeField(null=True, blank=True)
+    borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     LOAN_STATUS = (
         ('m', '유지보수'),
@@ -45,6 +50,13 @@ class BookInstance(models.Model):
 
     def __str__(self):
         return '{0} ({1})'. format(self.id, self.book.title)
+
+    @property
+    def is_overdue(self):
+
+        if self.due_back and timezone.now() > self.due_back:
+            return True
+        return False
 
 
 class Author(models.Model):
